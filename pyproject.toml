@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "my_project"
+version = "0.1.0"
+description = "drug-target affinity prediction"
+authors = ["zeng qingyu <zengqingyu1998@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.21.0"
+pandas = "^1.5.3"
+scipy = "^1.10.0"
+scikit_learn = "^1.3.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
