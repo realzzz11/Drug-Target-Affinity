@@ -10,6 +10,9 @@ import torch.nn.functional as F
 from model import BACPI
 from utils import *
 from data_process import training_data_process
+from torch.utils.tensorboard import SummaryWriter
+import time
+from tqdm import tqdm
 
 
 args = argparse.ArgumentParser(description='Argparse for compound-protein interactions prediction')
@@ -43,6 +46,7 @@ params, _ = args.parse_known_args()
 
 
 def train_eval(model, task, data_train, data_dev, data_test, device, params):
+    writer = SummaryWriter(log_dir='./logs/{}'.format(task))  # 根据任务区分日志路径
     if task == 'affinity':
         criterion = F.mse_loss
         best_res = 2 ** 10
@@ -64,7 +68,9 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
         pred_labels = []
         predictions = []
         labels = []
-        for i in range(math.ceil(len(data_train[0]) / batch_size)):
+        epoch_loss = 0  # 用于记录整个epoch的损失
+        start_time = time.time()  # Start timing for the epoch
+        for i in tqdm(range(math.ceil(len(data_train[0]) / batch_size)), desc="Training Batches"):
             batch_data = [data_train[di][idx[i * batch_size: (i + 1) * batch_size]] for di in range(len(data_train))]
             atoms_pad, atoms_mask, adjacencies_pad, batch_fps, amino_pad, amino_mask, label = batch2tensor(batch_data, device)
             pred = model(atoms_pad, atoms_mask, adjacencies_pad, amino_pad, amino_mask, batch_fps)
@@ -83,22 +89,35 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             loss.backward()
             optimizer.step()
 
-            if params.verbose:
-                sys.stdout.write('\repoch:{}, batch:{}/{}, loss:{}'.format(epoch, i, math.ceil(len(data_train[0])/batch_size)-1, float(loss.data)))
-                sys.stdout.flush()
+            epoch_loss += loss.item()
 
+        # 记录每个epoch的运行时间    
+        epoch_time = time.time() - start_time
+        writer.add_scalar('Time/epoch', epoch_time, epoch)
+        # 记录每个epoch的平均损失
+        writer.add_scalar('Loss/train', epoch_loss / len(data_train[0]), epoch)
+    
         if task == 'affinity':
             print(' ')
             predictions = np.array(predictions)
             labels = np.array(labels)
             rmse_train, pearson_train, spearman_train = regression_scores(labels, predictions)
-            print('Train rmse:{}, pearson:{}, spearman:{}'.format(rmse_train, pearson_train, spearman_train))
+            tqdm.write('Train rmse:{}, pearson:{}, spearman:{}'.format(rmse_train, pearson_train, spearman_train))
+            writer.add_scalar('RMSE/train', rmse_train, epoch)
+            writer.add_scalar('Pearson/train', pearson_train, epoch)
+            writer.add_scalar('Spearman/train', spearman_train, epoch)
 
             rmse_dev, pearson_dev, spearman_dev = test(model, task, data_dev, batch_size, device)
-            print('Dev rmse:{}, pearson:{}, spearman:{}'.format(rmse_dev, pearson_dev, spearman_dev))
+            tqdm.write('Dev rmse:{}, pearson:{}, spearman:{}'.format(rmse_dev, pearson_dev, spearman_dev))
+            writer.add_scalar('RMSE/dev', rmse_dev, epoch)
+            writer.add_scalar('Pearson/dev', pearson_dev, epoch)
+            writer.add_scalar('Spearman/dev', spearman_dev, epoch)
 
             rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
-            print( 'Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
+            tqdm.write( 'Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
+            writer.add_scalar('RMSE/test', rmse_test, epoch)
+            writer.add_scalar('Pearson/test', pearson_test, epoch)
+            writer.add_scalar('Spearman/test', spearman_test, epoch)
 
             if rmse_dev < best_res:
                 best_res = rmse_dev
@@ -111,13 +130,13 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             predictions = np.array(predictions)
             labels = np.array(labels)
             auc_train, acc_train, apur_train = classification_scores(labels, predictions, pred_labels)
-            print('Train auc:{}, acc:{}, aupr:{}'.format(auc_train, acc_train, apur_train))
+            tqdm.write('Train auc:{}, acc:{}, aupr:{}'.format(auc_train, acc_train, apur_train))
 
             auc_dev, acc_dev, aupr_dev = test(model, task, data_dev, batch_size, device)
-            print('Dev auc:{}, acc:{}, aupr:{}'.format(auc_dev, acc_dev, aupr_dev))
+            tqdm.write('Dev auc:{}, acc:{}, aupr:{}'.format(auc_dev, acc_dev, aupr_dev))
 
             auc_test, acc_test, aupr_test = test(model, task, data_test, batch_size, device)
-            print('Test auc:{}, acc:{}, aupr:{}'.format(auc_test, acc_test, aupr_test))
+            tqdm.write('Test auc:{}, acc:{}, aupr:{}'.format(auc_test, acc_test, aupr_test))
 
             if auc_dev > best_res:
                 best_res = auc_dev
@@ -189,8 +208,9 @@ if __name__ == '__main__':
     print('training...')
     model = BACPI(task, len(atom_dict), len(amino_dict), params)
     model.to(device)
+    writer = SummaryWriter(log_dir='./logs/{}'.format(task))
     res = train_eval(model, task, train_data, dev_data, test_data, device, params)
-
+    writer.close()
     print('Finish training!')
     if task == 'affinity':
         print('Finally test result of rmse:{}, pearson:{}, spearman:{}'.format(res[0], res[1], res[2]))
