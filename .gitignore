@@ -2,3 +2,5 @@
 code/__pycache__/
 datasets/
 data/
+logs/
+runs/
