@@ -18,7 +18,6 @@ args.add_argument('-dataset', type=str, default='human', help='choose a dataset'
 args.add_argument('-mode', type=str, default='gpu', help='gpu/cpu')
 args.add_argument('-cuda', type=str, default='0', help='visible cuda devices')
 args.add_argument('-verbose', type=int, default=1, help='0: do not output log in stdout, 1: output log')
-
 # Hyper-parameter
 args.add_argument('-lr', type=float, default=0.0005, help='init learning rate')
 args.add_argument('-step_size', type=int, default=10, help='step size of lr_scheduler')
@@ -164,7 +163,7 @@ if __name__ == '__main__':
     task = params.task
     dataset = params.dataset
 
-    data_dir = '../datasets/' + task + '/' + dataset
+    data_dir = './datasets/' + task + '/' + dataset
     if not os.path.isdir(data_dir):
         training_data_process(task, dataset)
 

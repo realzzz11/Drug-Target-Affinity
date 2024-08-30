@@ -12,12 +12,12 @@ def extract_data(measure, file):
 
 
 def affinity_data_prepare(dataset):
-    data_dir = '../data/affinity/' + dataset
+    data_dir = './data/affinity/' + dataset
     if not os.path.isdir(data_dir):
         tar = tarfile.open(data_dir + '.tar.xz')
         os.mkdir(data_dir)
         for name in tar.getnames():
-            tar.extract(name, '../data/affinity/')
+            tar.extract(name, './data/affinity/')
         tar.close()
 
     extract_data(dataset, data_dir + '/train')
