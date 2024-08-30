@@ -41,6 +41,26 @@ class GATLayer(nn.Module):
 
         return all_combinations_matrix.view(b, N, N, 2 * self.out_features)
 
+class DynamicHeadGATLayer(nn.Module):
+    def __init__(self, in_features, out_features, num_heads, dropout, alpha):
+        super(DynamicHeadGATLayer, self).__init__()
+        self.num_heads = num_heads
+        self.gat_heads = nn.ModuleList([GATLayer(in_features, out_features, dropout, alpha, concat=True)
+                                        for _ in range(num_heads)])
+        # 引入可学习的权重参数
+        self.head_weights = nn.Parameter(torch.ones(num_heads))
+        self.softmax = nn.Softmax(dim=0)
+    
+    def forward(self, input, adj):
+        head_outputs = [head(input, adj) for head in self.gat_heads]
+        
+        # 对权重进行归一化处理
+        normalized_weights = self.softmax(self.head_weights)
+        
+        # 加权求和
+        output = sum(w * head_out for w, head_out in zip(normalized_weights, head_outputs))
+        
+        return output
 
 class BACPI(nn.Module):
     def __init__(self, task, n_atom, n_amino, params):
@@ -58,12 +78,9 @@ class BACPI(nn.Module):
         self.layer_cnn = layer_cnn
         self.layer_out = layer_out
 
-        self.gat_layers = [GATLayer(comp_dim, gat_dim, dropout=dropout, alpha=alpha, concat=True)
-                           for _ in range(num_head)]
-        for i, layer in enumerate(self.gat_layers):
-            self.add_module('gat_layer_{}'.format(i), layer)
-        self.gat_out = GATLayer(gat_dim * num_head, comp_dim, dropout=dropout, alpha=alpha, concat=False)
-        self.W_comp = nn.Linear(comp_dim, latent_dim)
+        self.gat_layers = DynamicHeadGATLayer(comp_dim, gat_dim, num_head, dropout=dropout, alpha=alpha)
+        self.gat_out = GATLayer(gat_dim, comp_dim, dropout=dropout, alpha=alpha, concat=False)
+        self.W_comp = nn.Linear(comp_dim, latent_dim) # 将 CNN 层的输出映射到 latent_dim 维度
 
         self.conv_layers = nn.ModuleList([nn.Conv2d(in_channels=1, out_channels=1, kernel_size=2*window+1,
                                                     stride=1, padding=window) for _ in range(layer_cnn)])
@@ -100,8 +117,8 @@ class BACPI(nn.Module):
 
     def comp_gat(self, atoms, atoms_mask, adj):
         atoms_vector = self.embedding_layer_atom(atoms)
-        atoms_multi_head = torch.cat([gat(atoms_vector, adj) for gat in self.gat_layers], dim=2)
-        atoms_vector = F.elu(self.gat_out(atoms_multi_head, adj))
+        atoms_vector = self.gat_layers(atoms_vector, adj)  # 使用单一的 DynamicHeadGATLayer
+        atoms_vector = F.elu(self.gat_out(atoms_vector, adj))
         atoms_vector = F.leaky_relu(self.W_comp(atoms_vector), self.alpha)
         return atoms_vector
 
