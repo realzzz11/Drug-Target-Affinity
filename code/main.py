@@ -46,7 +46,7 @@ params, _ = args.parse_known_args()
 
 
 def train_eval(model, task, data_train, data_dev, data_test, device, params):
-    writer = SummaryWriter(log_dir='./logs/{}'.format(task))  # 根据任务区分日志路径
+    writer = SummaryWriter(log_dir='runs/experiment2')
     if task == 'affinity':
         criterion = F.mse_loss
         best_res = 2 ** 10
@@ -113,16 +113,9 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             writer.add_scalar('Pearson/dev', pearson_dev, epoch)
             writer.add_scalar('Spearman/dev', spearman_dev, epoch)
 
-            rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
-            tqdm.write( 'Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
-            writer.add_scalar('RMSE/test', rmse_test, epoch)
-            writer.add_scalar('Pearson/test', pearson_test, epoch)
-            writer.add_scalar('Spearman/test', spearman_test, epoch)
-
             if rmse_dev < best_res:
                 best_res = rmse_dev
-                # torch.save(model, '../checkpoint/best_model_affinity.pth')
-                res = [rmse_test, pearson_test, spearman_test]
+                torch.save(model, f'./checkpoint/best_model_affinity_epoch_{epoch}.pth')
         
         else:
             print(' ')
@@ -144,6 +137,21 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
                 res = [auc_test, acc_test, aupr_test]
 
         scheduler.step()
+    # Evaluate on test set only once after training is complete
+    if task == 'affinity':
+        rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
+        tqdm.write('Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
+        writer.add_scalar('RMSE/test', rmse_test, epoch)
+        writer.add_scalar('Pearson/test', pearson_test, epoch)
+        writer.add_scalar('Spearman/test', spearman_test, epoch)
+        res = [rmse_test, pearson_test, spearman_test]
+    else:
+        auc_test, acc_test, aupr_test = test(model, task, data_test, batch_size, device)
+        tqdm.write('Test auc:{}, acc:{}, aupr:{}'.format(auc_test, acc_test, aupr_test))
+        writer.add_scalar('AUC/test', auc_test, epoch)
+        writer.add_scalar('Accuracy/test', acc_test, epoch)
+        writer.add_scalar('AUPR/test', aupr_test, epoch)
+        res = [auc_test, acc_test, aupr_test]
     return res
 
 
