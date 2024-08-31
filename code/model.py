@@ -47,18 +47,16 @@ class DynamicHeadGATLayer(nn.Module):
         self.num_heads = num_heads
         self.gat_heads = nn.ModuleList([GATLayer(in_features, out_features, dropout, alpha, concat=True)
                                         for _ in range(num_heads)])
-        # 引入可学习的权重参数
+        # 可学习的头权重
         self.head_weights = nn.Parameter(torch.ones(num_heads))
         self.softmax = nn.Softmax(dim=0)
     
-    def forward(self, input, adj):
-        head_outputs = [head(input, adj) for head in self.gat_heads]
-        
-        # 对权重进行归一化处理
+    def forward(self, x, adj):
+        head_outputs = [head(x, adj) for head in self.gat_heads]
         normalized_weights = self.softmax(self.head_weights)
         
-        # 加权求和
-        output = sum(w * head_out for w, head_out in zip(normalized_weights, head_outputs))
+        # 动态加权
+        output = sum(w * h_out for w, h_out in zip(normalized_weights, head_outputs))
         
         return output
 
