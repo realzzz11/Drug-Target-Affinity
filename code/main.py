@@ -22,11 +22,11 @@ args.add_argument('-mode', type=str, default='gpu', help='gpu/cpu')
 args.add_argument('-cuda', type=str, default='0', help='visible cuda devices')
 args.add_argument('-verbose', type=int, default=1, help='0: do not output log in stdout, 1: output log')
 # Hyper-parameter
-args.add_argument('-lr', type=float, default=0.0005, help='init learning rate')
+args.add_argument('-lr', type=float, default=0.00001, help='init learning rate')
 args.add_argument('-step_size', type=int, default=10, help='step size of lr_scheduler')
-args.add_argument('-gamma', type=float, default=0.5, help='lr weight decay rate')
+args.add_argument('-gamma', type=float, default=0.7, help='lr weight decay rate')
 args.add_argument('-batch_size', type=int, default=16, help='batch size')
-args.add_argument('-num_epochs', type=int, default=20, help='number of epochs')
+args.add_argument('-num_epochs', type=int, default=50, help='number of epochs')
 
 # graph attention layer
 args.add_argument('-gat_dim', type=int, default=50, help='dimension of node feature in graph attention layer')
@@ -38,7 +38,7 @@ args.add_argument('-comp_dim', type=int, default=80, help='dimension of compound
 args.add_argument('-prot_dim', type=int, default=80, help='dimension of protein amino feature')
 args.add_argument('-latent_dim', type=int, default=80, help='dimension of compound and protein feature')
 
-args.add_argument('-window', type=int, default=5, help='window size of cnn model')
+args.add_argument('-window', type=int, default=3, help='window size of cnn model')
 args.add_argument('-layer_cnn', type=int, default=3, help='number of layer in cnn model')
 args.add_argument('-layer_out', type=int, default=3, help='number of output layer in prediction model')
 
@@ -46,7 +46,7 @@ params, _ = args.parse_known_args()
 
 
 def train_eval(model, task, data_train, data_dev, data_test, device, params):
-    writer = SummaryWriter(log_dir='./logs/{}'.format(task))  # 根据任务区分日志路径
+    writer = SummaryWriter(log_dir='runs/experiment26')
     if task == 'affinity':
         criterion = F.mse_loss
         best_res = 2 ** 10
@@ -113,16 +113,9 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             writer.add_scalar('Pearson/dev', pearson_dev, epoch)
             writer.add_scalar('Spearman/dev', spearman_dev, epoch)
 
-            rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
-            tqdm.write( 'Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
-            writer.add_scalar('RMSE/test', rmse_test, epoch)
-            writer.add_scalar('Pearson/test', pearson_test, epoch)
-            writer.add_scalar('Spearman/test', spearman_test, epoch)
-
             if rmse_dev < best_res:
                 best_res = rmse_dev
-                # torch.save(model, '../checkpoint/best_model_affinity.pth')
-                res = [rmse_test, pearson_test, spearman_test]
+                torch.save(model, f'./checkpoint/best_model_expriment26.pth')
         
         else:
             print(' ')
@@ -144,6 +137,21 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
                 res = [auc_test, acc_test, aupr_test]
 
         scheduler.step()
+    
+    if task == 'affinity':
+        rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
+        tqdm.write('Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
+        writer.add_scalar('RMSE/test', rmse_test, epoch)
+        writer.add_scalar('Pearson/test', pearson_test, epoch)
+        writer.add_scalar('Spearman/test', spearman_test, epoch)
+        res = [rmse_test, pearson_test, spearman_test]
+    else:
+        auc_test, acc_test, aupr_test = test(model, task, data_test, batch_size, device)
+        tqdm.write('Test auc:{}, acc:{}, aupr:{}'.format(auc_test, acc_test, aupr_test))
+        writer.add_scalar('AUC/test', auc_test, epoch)
+        writer.add_scalar('Accuracy/test', acc_test, epoch)
+        writer.add_scalar('AUPR/test', aupr_test, epoch)
+        res = [auc_test, acc_test, aupr_test]
     return res
 
 
@@ -201,6 +209,9 @@ if __name__ == '__main__':
     train_data = load_data(data_dir, 'train')
     test_data = load_data(data_dir, 'test')
     train_data, dev_data = split_data(train_data, 0.1)
+    print("train_data: ", len(train_data[0]))
+    print("dev_data: ", len(dev_data[0]))
+    print("test_data: ", len(test_data[0]))
 
     atom_dict = pickle.load(open(data_dir + '/atom_dict', 'rb'))
     amino_dict = pickle.load(open(data_dir + '/amino_dict', 'rb'))
