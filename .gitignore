@@ -1,0 +1,6 @@
+data/*
+datasets/*
+code/__pycache__/*
+runs/*
+logs/*
+checkpoint/*

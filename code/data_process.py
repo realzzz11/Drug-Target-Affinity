@@ -130,13 +130,13 @@ def extract_input_data(input_path, output_path, radius, ngram):
 def training_data_process(task, dataset):
     radius, ngram = 2, 3
 
-    if not os.path.isdir(os.path.join('../data', task, dataset)):
+    if not os.path.isdir(os.path.join('./data', task, dataset)):
         training_data_prepare(task, dataset)
 
     for name in ['train', 'test']:
-        input_path = os.path.join('../data', task, dataset, name)
-        output_path = os.path.join('../datasets', task, dataset, name)
+        input_path = os.path.join('./data', task, dataset, name)
+        output_path = os.path.join('./datasets', task, dataset, name)
         extract_input_data(input_path, output_path, radius, ngram)
 
-    dump_dictionary(fingerprint_dict, os.path.join('../datasets', task, dataset, 'atom_dict'))
-    dump_dictionary(word_dict, os.path.join('../datasets', task, dataset, 'amino_dict'))
+    dump_dictionary(fingerprint_dict, os.path.join('./datasets', task, dataset, 'atom_dict'))
+    dump_dictionary(word_dict, os.path.join('./datasets', task, dataset, 'amino_dict'))
