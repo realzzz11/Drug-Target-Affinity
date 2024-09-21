@@ -10,6 +10,8 @@ import torch.nn.functional as F
 from model import BACPI
 from utils import *
 from data_process import training_data_process
+from torch.utils.tensorboard import SummaryWriter
+import time
 
 
 args = argparse.ArgumentParser(description='Argparse for compound-protein interactions prediction')
@@ -44,6 +46,7 @@ params, _ = args.parse_known_args()
 
 
 def train_eval(model, task, data_train, data_dev, data_test, device, params):
+    writer = SummaryWriter(log_dir='runs/experiment_lr0.0002_batchsize32_epoch100_v3params')
     if task == 'affinity':
         criterion = F.mse_loss
         best_res = 2 ** 10
@@ -65,6 +68,10 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
         pred_labels = []
         predictions = []
         labels = []
+
+        epoch_loss = 0  # 用于记录整个epoch的损失
+        start_time = time.time()
+
         for i in range(math.ceil(len(data_train[0]) / batch_size)):
             batch_data = [data_train[di][idx[i * batch_size: (i + 1) * batch_size]] for di in range(len(data_train))]
             atoms_pad, atoms_mask, adjacencies_pad, batch_fps, amino_pad, amino_mask, label = batch2tensor(batch_data, device)
@@ -84,9 +91,18 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             loss.backward()
             optimizer.step()
 
+            epoch_loss += loss.item()
+
+            
             if params.verbose:
                 sys.stdout.write('\repoch:{}, batch:{}/{}, loss:{}'.format(epoch, i, math.ceil(len(data_train[0])/batch_size)-1, float(loss.data)))
                 sys.stdout.flush()
+
+        # 记录每个epoch的运行时间    
+        epoch_time = time.time() - start_time
+        writer.add_scalar('Time/epoch', epoch_time, epoch)
+        # 记录每个epoch的平均损失
+        writer.add_scalar('Loss/train', epoch_loss / len(data_train[0]), epoch)
 
         if task == 'affinity':
             print(' ')
@@ -94,16 +110,25 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
             labels = np.array(labels)
             rmse_train, pearson_train, spearman_train = regression_scores(labels, predictions)
             print('Train rmse:{}, pearson:{}, spearman:{}'.format(rmse_train, pearson_train, spearman_train))
+            writer.add_scalar('RMSE/train', rmse_train, epoch)
+            writer.add_scalar('Pearson/train', pearson_train, epoch)
+            writer.add_scalar('Spearman/train', spearman_train, epoch)
 
             rmse_dev, pearson_dev, spearman_dev = test(model, task, data_dev, batch_size, device)
             print('Dev rmse:{}, pearson:{}, spearman:{}'.format(rmse_dev, pearson_dev, spearman_dev))
+            writer.add_scalar('RMSE/dev', rmse_dev, epoch)
+            writer.add_scalar('Pearson/dev', pearson_dev, epoch)
+            writer.add_scalar('Spearman/dev', spearman_dev, epoch)
 
             rmse_test, pearson_test, spearman_test = test(model, task, data_test, batch_size, device)
             print( 'Test rmse:{}, pearson:{}, spearman:{}'.format(rmse_test, pearson_test, spearman_test))
+            writer.add_scalar('RMSE/test', rmse_test, epoch)
+            writer.add_scalar('Pearson/test', pearson_test, epoch)
+            writer.add_scalar('Spearman/test', spearman_test, epoch)
 
             if rmse_dev < best_res:
                 best_res = rmse_dev
-                # torch.save(model, '../checkpoint/best_model_affinity.pth')
+                torch.save(model, './checkpoint/best_model_lr0.0002_batchsize32_epoch100_v3params.pth')
                 res = [rmse_test, pearson_test, spearman_test]
         
         else:
@@ -164,7 +189,7 @@ if __name__ == '__main__':
     task = params.task
     dataset = params.dataset
 
-    data_dir = '../datasets/' + task + '/' + dataset
+    data_dir = './datasets/' + task + '/' + dataset
     if not os.path.isdir(data_dir):
         training_data_process(task, dataset)
 
@@ -190,7 +215,10 @@ if __name__ == '__main__':
     print('training...')
     model = BACPI(task, len(atom_dict), len(amino_dict), params)
     model.to(device)
+
+    writer = SummaryWriter(log_dir='./logs/{}'.format(task))
     res = train_eval(model, task, train_data, dev_data, test_data, device, params)
+    writer.close()
 
     print('Finish training!')
     if task == 'affinity':
