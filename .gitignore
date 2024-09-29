@@ -4,3 +4,5 @@ code/__pycache__/*
 runs/*
 logs/*
 checkpoint/*
+optuna_runs/*
+optuna_checkpoint/*
