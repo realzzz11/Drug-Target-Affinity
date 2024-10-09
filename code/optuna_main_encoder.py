@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from model import BACPI
+from encoder_model import BACPI
 from utils import *
 from data_process import training_data_process
 from torch.utils.tensorboard import SummaryWriter
@@ -38,7 +38,6 @@ args.add_argument('-alpha', type=float, default=0.1, help='LeakyReLU alpha')
 args.add_argument('-comp_dim', type=int, default=80, help='dimension of compound atoms feature')
 args.add_argument('-prot_dim', type=int, default=80, help='dimension of protein amino feature')
 args.add_argument('-latent_dim', type=int, default=80, help='dimension of compound and protein feature')
-
 args.add_argument('-window', type=int, default=5, help='window size of cnn model')
 args.add_argument('-layer_cnn', type=int, default=3, help='number of layer in cnn model')
 args.add_argument('-layer_out', type=int, default=3, help='number of output layer in prediction model')
@@ -52,11 +51,13 @@ def objective(trial):
     params.step_size = trial.suggest_int('step_size', 5, 20)
     params.gamma = trial.suggest_float('gamma', 0.1, 0.9)
     params.batch_size = trial.suggest_int('batch_size', 8, 64)
-    params.num_epochs = trial.suggest_int('num_epochs', 30, 100)
-    
+    params.weight_decay = trial.suggest_float('weight_decay', 1e-4, 0.5)
+    # params.num_epochs = trial.suggest_int('num_epochs', 2, 5)
+    params.num_epochs = 80
+
     # graph attention layer
     params.gat_dim = trial.suggest_int('gat_dim', 16, 128)
-    params.num_head = trial.suggest_int('num_head', 1, 8)
+    params.num_head = trial.suggest_int('num_head', 2, 8, step=2)
     params.dropout = trial.suggest_float('dropout', 0.1, 0.6)
     params.alpha = trial.suggest_float('alpha', 0.01, 0.2)
 
@@ -64,14 +65,15 @@ def objective(trial):
     params.comp_dim = trial.suggest_int('comp_dim', 32, 128)
     params.prot_dim = trial.suggest_int('prot_dim', 32, 128)
     params.latent_dim = trial.suggest_int('latent_dim', 32, 128)
+    params.hid_dim = trial.suggest_int('hid_dim', 4 * params.num_head, 64, step=4 * params.num_head)
 
     # cnn window size and layers
     params.window = trial.suggest_int('window', 3, 10)
     params.layer_cnn = trial.suggest_int('layer_cnn', 1, 5)
     params.layer_out = trial.suggest_int('layer_out', 1, 5)
-
+    
     # 打印当前试验的超参数组合到txt文件
-    with open("./output/optuna_trial_log.txt", "a") as f:
+    with open("./output_encoder_decoder/optuna_encoder_decoder_trial_log.txt", "a") as f:
         f.write(f"Trial {trial.number}:\n")
         f.write(f"  lr: {params.lr}\n")
         f.write(f"  step_size: {params.step_size}\n")
@@ -100,7 +102,7 @@ def objective(trial):
     amino_dict = pickle.load(open(data_dir + '/amino_dict', 'rb'))
 
     # 创建并训练模型
-    model = BACPI(params.task, len(atom_dict), len(amino_dict), params)
+    model = BACPI(params.task, len(atom_dict), len(amino_dict), params, device)
     model.to(device)
     
     # 调用 train_eval 传递 trial
@@ -147,14 +149,14 @@ def train_eval(model, task, data_train, data_dev=None, data_test=None, device=No
         print("Please choose a correct task!!!")
         return 
     
-    optimizer = optim.Adam(model.parameters(), lr=params.lr, weight_decay=0.01, amsgrad=True)
+    optimizer = optim.Adam(model.parameters(), lr=params.lr, weight_decay=params.weight_decay, amsgrad=True)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=params.step_size, gamma=params.gamma)
     
     idx = np.arange(len(data_train[0]))
     batch_size = params.batch_size
     
     # 训练循环
-    for epoch in range(params.num_epochs):
+    for epoch in range(80):
         np.random.shuffle(idx)
         model.train()
         pred_labels, predictions, labels = [], [], []
@@ -323,7 +325,7 @@ if __name__ == '__main__':
     )
 
     # 优化器相关参数在训练过程中传递
-    optimizer = optim.Adam(best_model.parameters(), lr=best_params['lr'], weight_decay=0.01)
+    optimizer = optim.Adam(best_model.parameters(), lr=best_params['lr'], weight_decay=best_params['weight_decay'])
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=best_params['step_size'], gamma=best_params['gamma'])
 
     # 将模型移到设备上
