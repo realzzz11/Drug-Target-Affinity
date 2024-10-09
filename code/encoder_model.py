@@ -75,7 +75,7 @@ class SelfAttention(nn.Module):
         return x
     
 class Encoder(nn.Module):
-    def __init__(self, protein_dim, hid_dim, n_layers, kernel_size , dropout, device):
+    def __init__(self, protein_dim, hid_dim, n_layers, kernel_size, dropout, device):
         super().__init__()
         assert kernel_size % 2 == 1, "Kernel size must be odd (for now)"
         self.input_dim = protein_dim
@@ -84,10 +84,17 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.device = device
         self.scale = torch.sqrt(torch.FloatTensor([0.5])).to(device)
-        self.convs = nn.ModuleList([nn.Conv1d(hid_dim, 2*hid_dim, kernel_size, padding=(kernel_size-1)//2) for _ in range(self.n_layers)])   # convolutional layers
+        self.convs = nn.ModuleList([
+            nn.Conv1d(hid_dim, 2 * hid_dim, kernel_size, padding=(kernel_size - 1) // 2)
+            for _ in range(self.n_layers)
+        ])
         self.do = nn.Dropout(dropout)
         self.fc = nn.Linear(self.input_dim, self.hid_dim)
-        self.gn = nn.GroupNorm(8, hid_dim * 2)
+        # 动态计算 num_groups，使得 num_channels 是 num_groups 的整数倍
+        # num_groups = max(1, min(hid_dim // 8, 8))  # 确保 num_groups 不超过 8 且合理划分
+        # self.gn = nn.GroupNorm(8, hid_dim * 2)
+        num_groups = max(1, min(hid_dim * 2 // 8, 8))
+        self.gn = nn.GroupNorm(num_groups, hid_dim * 2)
         self.ln = nn.LayerNorm(hid_dim)
 
     def forward(self, protein):
@@ -102,7 +109,7 @@ class Encoder(nn.Module):
         conved = conved.permute(0, 2, 1)
         conved = self.ln(conved)
         return conved
-
+    
 class PositionwiseFeedforward(nn.Module):
     def __init__(self, hid_dim, pf_dim, dropout):
         super().__init__()
@@ -243,11 +250,14 @@ class BACPI(nn.Module):
         return a_softmax
     
     def encoder_decoder(self, atoms_vector, amino_vector):
+        # 编码化合物和蛋白质特征
         compound_encoded = self.compound_encoder(atoms_vector)
         protein_encoded = self.protein_encoder(amino_vector)
+        
+        # 使用化合物和蛋白质的编码特征进行解码
         compound_decoded = self.compound_decoder(compound_encoded, protein_encoded)
         protein_decoded = self.protein_decoder(protein_encoded, compound_encoded)
-
+    
         return compound_decoded, protein_decoded
 
     def bidirectional_attention_prediction(self, atoms_vector, atoms_mask, fps, amino_vector, amino_mask):
@@ -289,17 +299,19 @@ class BACPI(nn.Module):
         return self.output(cf_pf)
 
     def forward(self, atoms, atoms_mask, adjacency, amino, amino_mask, fps):
-        # Compound GAT and Protein CNN
+        # 1. 使用GAT层提取化合物特征
         atoms_vector = self.comp_gat(atoms, atoms_mask, adjacency)
+        # 2. 使用卷积层提取蛋白质特征
         amino_vector = self.prot_cnn(amino, amino_mask)
 
-        # Global feature transformations
+        # 3. 使用全局特征转换
         transformed_fps_1 = F.leaky_relu(torch.matmul(fps, self.fp0), 0.1)
         transformed_fps_2 = F.leaky_relu(torch.matmul(transformed_fps_1, self.fp1), 0.1)
 
-        # Encoder-Decoder process
+        # 4. 编码和解码化合物与蛋白质特征
+        # 确保传入的特征是合适的形状
         atoms_decoded, amino_decoded = self.encoder_decoder(atoms_vector, amino_vector)
 
-        # Bidirectional attention prediction
+        # 5. 使用双向注意力机制进行预测
         prediction = self.bidirectional_attention_prediction(atoms_decoded, atoms_mask, transformed_fps_2, amino_decoded, amino_mask)
         return prediction
