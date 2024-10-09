@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 args = argparse.ArgumentParser(description='Argparse for compound-protein interactions prediction')
 args.add_argument('-task', type=str, default='affinity', help='affinity/interaction')
 args.add_argument('-dataset', type=str, default='Kd', help='choose a dataset')
-args.add_argument('-mode', type=str, default='cpu', help='gpu/cpu')
+args.add_argument('-mode', type=str, default='gpu', help='gpu/cpu')
 args.add_argument('-cuda', type=str, default='0', help='visible cuda devices')
 args.add_argument('-verbose', type=int, default=1, help='0: do not output log in stdout, 1: output log')
 
@@ -88,7 +88,6 @@ def objective(trial):
         f.write(f"  alpha: {params.alpha}\n")
         f.write(f"  comp_dim: {params.comp_dim}\n")
         f.write(f"  prot_dim: {params.prot_dim}\n")
-        f.write(f"  latent_dim: {params.latent_dim}\n")
         f.write(f"  window: {params.window}\n")
         f.write(f"  layer_cnn: {params.layer_cnn}\n")
         f.write(f"  layer_out: {params.layer_out}\n")
@@ -167,10 +166,10 @@ def train_eval(model, task, data_train, data_dev=None, data_test=None, device=No
 
         # 批次训练
         for i in range(math.ceil(len(data_train[0]) / batch_size)):
-            logging.info(f"Processing batch {i+1}/{math.ceil(len(data_train[0]) / batch_size)}")
+            # logging.info(f"Processing batch {i+1}/{math.ceil(len(data_train[0]) / batch_size)}")
             batch_data = [data_train[di][idx[i * batch_size: (i + 1) * batch_size]] for di in range(len(data_train))]
             atoms_pad, atoms_mask, adjacencies_pad, batch_fps, amino_pad, amino_mask, label = batch2tensor(batch_data, device)
-            logging.info(f"Batch {i+1}: batch_fps shape: {batch_fps.shape}, amino_pad shape: {amino_pad.shape}, amino_mask shape: {amino_mask.shape}")
+            # logging.info(f"Batch {i+1}: batch_fps shape: {batch_fps.shape}, amino_pad shape: {amino_pad.shape}, amino_mask shape: {amino_mask.shape}")
             pred = model(atoms_pad, atoms_mask, adjacencies_pad, amino_pad, amino_mask, batch_fps)
             if task == 'affinity':
                 loss = criterion(pred.float(), label.float())
@@ -258,7 +257,7 @@ def test(model, task, data_test, batch_size, device):
     for i in range(math.ceil(len(data_test[0]) / batch_size)):
         batch_data = [data_test[di][i * batch_size: (i + 1) * batch_size] for di in range(len(data_test))]
         atoms_pad, atoms_mask, adjacencies_pad, batch_fps, amino_pad, amino_mask, label = batch2tensor(batch_data, device)
-        logging.info(f"After fps2number, batch_fps shape: {batch_fps.shape}")
+        # logging.info(f"After fps2number, batch_fps shape: {batch_fps.shape}")
         with torch.no_grad():
             pred = model(atoms_pad, atoms_mask, adjacencies_pad, amino_pad, amino_mask, batch_fps)
         if task == 'affinity':
