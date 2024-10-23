@@ -1,0 +1,948 @@
+Trial 0:
+  lr: 7.4955105298935e-05
+  step_size: 13
+  gamma: 0.6504970204753497
+  batch_size: 45
+  num_epochs: 64
+  gat_dim: 74
+  num_head: 7
+  dropout: 0.1697721756349729
+  alpha: 0.11915877795547887
+  comp_dim: 81
+  prot_dim: 78
+  latent_dim: 122
+  window: 8
+  layer_cnn: 5
+  layer_out: 5
+  Result: 1.091634
+
+Trial 1:
+  lr: 1.3764863413382598e-05
+  step_size: 6
+  gamma: 0.3252094843111053
+  batch_size: 11
+  num_epochs: 35
+  gat_dim: 76
+  num_head: 7
+  dropout: 0.12786260872084956
+  alpha: 0.12778713201880568
+  comp_dim: 126
+  prot_dim: 44
+  latent_dim: 76
+  window: 4
+  layer_cnn: 2
+  layer_out: 2
+  Result: 1.192371
+
+Trial 2:
+  lr: 0.0004934206127074946
+  step_size: 15
+  gamma: 0.4873779042179024
+  batch_size: 25
+  num_epochs: 76
+  gat_dim: 41
+  num_head: 3
+  dropout: 0.48083306407152726
+  alpha: 0.09836146308223302
+  comp_dim: 85
+  prot_dim: 107
+  latent_dim: 79
+  window: 5
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.029877
+
+Trial 3:
+  lr: 6.001173990063662e-05
+  step_size: 19
+  gamma: 0.36000308734562847
+  batch_size: 47
+  num_epochs: 35
+  gat_dim: 72
+  num_head: 8
+  dropout: 0.4440476517626173
+  alpha: 0.057649549896289856
+  comp_dim: 76
+  prot_dim: 89
+  latent_dim: 126
+  window: 4
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.04596
+
+Trial 4:
+  lr: 0.004007040696149416
+  step_size: 20
+  gamma: 0.14505288183274623
+  batch_size: 36
+  num_epochs: 48
+  gat_dim: 28
+  num_head: 4
+  dropout: 0.20287201322929502
+  alpha: 0.1651756106807054
+  comp_dim: 87
+  prot_dim: 47
+  latent_dim: 74
+  window: 9
+  layer_cnn: 5
+  layer_out: 1
+  Result: 1.05901
+
+Trial 5:
+  lr: 0.0011115592404336244
+  step_size: 19
+  gamma: 0.5698893976836285
+  batch_size: 25
+  num_epochs: 88
+  gat_dim: 100
+  num_head: 6
+  dropout: 0.40172610834361333
+  alpha: 0.05266622872598147
+  comp_dim: 79
+  prot_dim: 93
+  latent_dim: 64
+  window: 7
+  layer_cnn: 5
+  layer_out: 4
+  Result: 1.070281
+
+Trial 6:
+  lr: 2.328133668311843e-05
+  step_size: 20
+  gamma: 0.42137945649914665
+  batch_size: 17
+  num_epochs: 95
+  gat_dim: 124
+  num_head: 6
+  dropout: 0.5663929326658007
+  alpha: 0.14061559490492914
+  comp_dim: 105
+  prot_dim: 103
+  latent_dim: 44
+  window: 5
+  layer_cnn: 5
+  layer_out: 3
+  Result: 1.111922
+
+Trial 7:
+  lr: 0.008210623939176208
+  step_size: 8
+  gamma: 0.6107649046669017
+  batch_size: 30
+  num_epochs: 91
+  gat_dim: 108
+  num_head: 3
+  dropout: 0.1407718387928876
+  alpha: 0.10682921175118297
+  comp_dim: 75
+  prot_dim: 95
+  latent_dim: 62
+  window: 5
+  layer_cnn: 2
+  layer_out: 5
+  Result: 1.131786
+
+Trial 8:
+  lr: 0.0004556211742518807
+  step_size: 16
+  gamma: 0.29075706916677724
+  batch_size: 30
+  num_epochs: 68
+  gat_dim: 26
+  num_head: 7
+  dropout: 0.5408847836082831
+  alpha: 0.1724681581359656
+  comp_dim: 107
+  prot_dim: 79
+  latent_dim: 70
+  window: 10
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.06617
+
+Trial 9:
+  lr: 0.03273588789316703
+  step_size: 19
+  gamma: 0.37076295057440944
+  batch_size: 43
+  num_epochs: 100
+  gat_dim: 104
+  num_head: 8
+  dropout: 0.16991767955081924
+  alpha: 0.012893687924479763
+  comp_dim: 122
+  prot_dim: 91
+  latent_dim: 88
+  window: 6
+  layer_cnn: 1
+  layer_out: 3
+  Result: 977841.027037
+
+Trial 10:
+  lr: 0.00042071506776163446
+  step_size: 11
+  gamma: 0.8793807218271932
+  batch_size: 57
+  num_epochs: 75
+  gat_dim: 47
+  num_head: 1
+  dropout: 0.2979541656918027
+  alpha: 0.073733852336751
+  comp_dim: 39
+  prot_dim: 127
+  latent_dim: 104
+  window: 3
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.030804
+
+Trial 11:
+  lr: 0.0003490794097767342
+  step_size: 11
+  gamma: 0.8480838895301559
+  batch_size: 61
+  num_epochs: 78
+  gat_dim: 49
+  num_head: 1
+  dropout: 0.29217843543638333
+  alpha: 0.07433202982170847
+  comp_dim: 38
+  prot_dim: 125
+  latent_dim: 98
+  window: 3
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.059354
+
+Trial 12:
+  lr: 0.001704879502925695
+  step_size: 13
+  gamma: 0.8661912438839999
+  batch_size: 64
+  num_epochs: 73
+  gat_dim: 50
+  num_head: 1
+  dropout: 0.2874524963791842
+  alpha: 0.0857181158667985
+  comp_dim: 44
+  prot_dim: 127
+  latent_dim: 106
+  window: 3
+  layer_cnn: 3
+  layer_out: 4
+  Result: 1.093239
+
+Trial 13:
+  lr: 0.00024514529476225383
+  step_size: 11
+  gamma: 0.779924125921915
+  batch_size: 55
+  num_epochs: 57
+  gat_dim: 49
+  num_head: 2
+  dropout: 0.47583898655544754
+  alpha: 0.03028441402109841
+  comp_dim: 53
+  prot_dim: 110
+  latent_dim: 111
+  window: 5
+  layer_cnn: 1
+  layer_out: 4
+  Result: 1.147139
+
+Trial 14:
+  lr: 0.00016761287623957768
+  step_size: 16
+  gamma: 0.712512163980064
+  batch_size: 20
+  num_epochs: 81
+  gat_dim: 38
+  num_head: 3
+  dropout: 0.34119864693165675
+  alpha: 0.08809846580868345
+  comp_dim: 57
+  prot_dim: 114
+  latent_dim: 90
+  window: 3
+  layer_cnn: 3
+  layer_out: 5
+  Result: 1.090435
+
+Trial 15:
+  lr: 0.011118053154752925
+  step_size: 16
+  gamma: 0.46574111803909374
+  batch_size: 53
+  num_epochs: 57
+  gat_dim: 16
+  num_head: 2
+  dropout: 0.5000971839488441
+  alpha: 0.1494281845765506
+  comp_dim: 63
+  prot_dim: 118
+  latent_dim: 49
+  window: 6
+  layer_cnn: 1
+  layer_out: 4
+  Result: 1.127272
+
+Trial 16:
+  lr: 0.0020742620081202786
+  step_size: 10
+  gamma: 0.5106511495914056
+  batch_size: 37
+  num_epochs: 82
+  gat_dim: 61
+  num_head: 4
+  dropout: 0.38996554721403376
+  alpha: 0.050097976907995764
+  comp_dim: 97
+  prot_dim: 68
+  latent_dim: 88
+  window: 4
+  layer_cnn: 4
+  layer_out: 5
+  Result: 1.119604
+
+Trial 17:
+  lr: 0.000833885717519003
+  step_size: 14
+  gamma: 0.20777538006756202
+  batch_size: 10
+  num_epochs: 69
+  gat_dim: 86
+  num_head: 2
+  dropout: 0.2567212212271956
+  alpha: 0.09957634365473093
+  comp_dim: 35
+  prot_dim: 61
+  latent_dim: 109
+  window: 7
+  layer_cnn: 1
+  layer_out: 2
+  Result: 1.077432
+
+Trial 18:
+  lr: 7.341069363000454e-05
+  step_size: 8
+  gamma: 0.7164475397773837
+  batch_size: 28
+  num_epochs: 61
+  gat_dim: 59
+  num_head: 3
+  dropout: 0.36508617967054846
+  alpha: 0.0729283927518706
+  comp_dim: 66
+  prot_dim: 108
+  latent_dim: 100
+  window: 4
+  layer_cnn: 3
+  layer_out: 4
+  Result: 1.059386
+
+Trial 19:
+  lr: 0.09424449479876738
+  step_size: 15
+  gamma: 0.5250127488119657
+  batch_size: 21
+  num_epochs: 46
+  gat_dim: 38
+  num_head: 1
+  dropout: 0.44295195450170044
+  alpha: 0.19079433796340767
+  comp_dim: 93
+  prot_dim: 118
+  latent_dim: 34
+  window: 5
+  layer_cnn: 2
+  layer_out: 5
+  Result: 15776670212.032576
+
+Trial 20:
+  lr: 0.0006391476561795109
+  step_size: 9
+  gamma: 0.25250372675914745
+  batch_size: 52
+  num_epochs: 76
+  gat_dim: 36
+  num_head: 5
+  dropout: 0.5993944940466771
+  alpha: 0.03348553129590619
+  comp_dim: 112
+  prot_dim: 102
+  latent_dim: 116
+  window: 3
+  layer_cnn: 4
+  layer_out: 2
+  Result: 1.008592
+
+Trial 21:
+  lr: 0.0006200142310993458
+  step_size: 9
+  gamma: 0.24771896670914065
+  batch_size: 53
+  num_epochs: 75
+  gat_dim: 35
+  num_head: 5
+  dropout: 0.5809784154069769
+  alpha: 0.033977190174250646
+  comp_dim: 115
+  prot_dim: 101
+  latent_dim: 117
+  window: 3
+  layer_cnn: 4
+  layer_out: 2
+  Result: 1.169202
+
+Trial 22:
+  lr: 0.00017262309755097932
+  step_size: 5
+  gamma: 0.1333040083916378
+  batch_size: 59
+  num_epochs: 84
+  gat_dim: 16
+  num_head: 5
+  dropout: 0.5231239433524
+  alpha: 0.01882951533635814
+  comp_dim: 102
+  prot_dim: 128
+  latent_dim: 116
+  window: 4
+  layer_cnn: 4
+  layer_out: 1
+  Result: 1.195605
+
+Trial 23:
+  lr: 0.003356822319199606
+  step_size: 11
+  gamma: 0.43168961381198173
+  batch_size: 48
+  num_epochs: 71
+  gat_dim: 60
+  num_head: 4
+  dropout: 0.591046939445383
+  alpha: 0.06395612642620944
+  comp_dim: 116
+  prot_dim: 104
+  latent_dim: 99
+  window: 3
+  layer_cnn: 4
+  layer_out: 2
+  Result: 1.117626
+
+Trial 24:
+  lr: 0.00013704056306569162
+  step_size: 7
+  gamma: 0.19318220846477102
+  batch_size: 39
+  num_epochs: 77
+  gat_dim: 46
+  num_head: 5
+  dropout: 0.32367985032222557
+  alpha: 0.04067263325502571
+  comp_dim: 89
+  prot_dim: 119
+  latent_dim: 84
+  window: 6
+  layer_cnn: 3
+  layer_out: 1
+  Result: 1.085595
+
+Trial 25:
+  lr: 0.0009403351491303996
+  step_size: 12
+  gamma: 0.7793221120906695
+  batch_size: 57
+  num_epochs: 86
+  gat_dim: 28
+  num_head: 2
+  dropout: 0.23351723070542316
+  alpha: 0.08854934835244652
+  comp_dim: 50
+  prot_dim: 85
+  latent_dim: 103
+  window: 4
+  layer_cnn: 1
+  layer_out: 2
+  Result: 1.075684
+
+Trial 26:
+  lr: 0.00044809519959206794
+  step_size: 9
+  gamma: 0.6531409176342053
+  batch_size: 51
+  num_epochs: 63
+  gat_dim: 41
+  num_head: 3
+  dropout: 0.4424945462272958
+  alpha: 0.116814951251688
+  comp_dim: 68
+  prot_dim: 112
+  latent_dim: 128
+  window: 3
+  layer_cnn: 4
+  layer_out: 4
+  Result: 1.127192
+
+Trial 27:
+  lr: 2.9152696468342042e-05
+  step_size: 14
+  gamma: 0.27866185492776974
+  batch_size: 42
+  num_epochs: 92
+  gat_dim: 56
+  num_head: 6
+  dropout: 0.5382582658725088
+  alpha: 0.07223230073515621
+  comp_dim: 115
+  prot_dim: 32
+  latent_dim: 92
+  window: 5
+  layer_cnn: 2
+  layer_out: 5
+  Result: 1.177919
+
+Trial 28:
+  lr: 0.004596017536762266
+  step_size: 17
+  gamma: 0.5584665647509709
+  batch_size: 50
+  num_epochs: 78
+  gat_dim: 24
+  num_head: 4
+  dropout: 0.46399266736249734
+  alpha: 0.09963883803367958
+  comp_dim: 97
+  prot_dim: 98
+  latent_dim: 114
+  window: 8
+  layer_cnn: 3
+  layer_out: 4
+  Result: 1.112967
+
+Trial 29:
+  lr: 9.561724102963667e-05
+  step_size: 13
+  gamma: 0.6832112378948745
+  batch_size: 63
+  num_epochs: 65
+  gat_dim: 70
+  num_head: 1
+  dropout: 0.3854134659772427
+  alpha: 0.12106189737699187
+  comp_dim: 85
+  prot_dim: 67
+  latent_dim: 120
+  window: 4
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.091306
+
+Trial 30:
+  lr: 0.00028328153148185253
+  step_size: 12
+  gamma: 0.77957664688154
+  batch_size: 33
+  num_epochs: 51
+  gat_dim: 33
+  num_head: 2
+  dropout: 0.49816313261534795
+  alpha: 0.0426304525117204
+  comp_dim: 109
+  prot_dim: 121
+  latent_dim: 81
+  window: 7
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.056109
+
+Trial 31:
+  lr: 6.110982020395194e-05
+  step_size: 18
+  gamma: 0.3682993408238402
+  batch_size: 46
+  num_epochs: 31
+  gat_dim: 72
+  num_head: 7
+  dropout: 0.4259127055873409
+  alpha: 0.058087042333082615
+  comp_dim: 71
+  prot_dim: 91
+  latent_dim: 128
+  window: 4
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.057246
+
+Trial 32:
+  lr: 4.646088286792518e-05
+  step_size: 10
+  gamma: 0.37811323695418564
+  batch_size: 46
+  num_epochs: 35
+  gat_dim: 83
+  num_head: 8
+  dropout: 0.3048677829938226
+  alpha: 0.027510768738362557
+  comp_dim: 60
+  prot_dim: 82
+  latent_dim: 123
+  window: 3
+  layer_cnn: 1
+  layer_out: 2
+  Result: 1.123672
+
+Trial 33:
+  lr: 0.0017243731645712004
+  step_size: 18
+  gamma: 0.3221200075461319
+  batch_size: 41
+  num_epochs: 42
+  gat_dim: 66
+  num_head: 8
+  dropout: 0.4170997191022884
+  alpha: 0.06568307430574835
+  comp_dim: 77
+  prot_dim: 85
+  latent_dim: 109
+  window: 4
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.054955
+
+Trial 34:
+  lr: 2.0490129260627513e-05
+  step_size: 14
+  gamma: 0.45818451625990364
+  batch_size: 58
+  num_epochs: 73
+  gat_dim: 80
+  num_head: 6
+  dropout: 0.35117963821449477
+  alpha: 0.046903849756330634
+  comp_dim: 124
+  prot_dim: 75
+  latent_dim: 123
+  window: 5
+  layer_cnn: 1
+  layer_out: 1
+  Result: 1.17888
+
+Trial 35:
+  lr: 1.2200330819546538e-05
+  step_size: 6
+  gamma: 0.10843945498049912
+  batch_size: 55
+  num_epochs: 67
+  gat_dim: 89
+  num_head: 5
+  dropout: 0.5594803157570942
+  alpha: 0.08260969462560651
+  comp_dim: 84
+  prot_dim: 105
+  latent_dim: 72
+  window: 3
+  layer_cnn: 5
+  layer_out: 2
+  Result: 1.464873
+
+Trial 36:
+  lr: 3.603889677936698e-05
+  step_size: 20
+  gamma: 0.5967418715393147
+  batch_size: 50
+  num_epochs: 54
+  gat_dim: 92
+  num_head: 7
+  dropout: 0.502029539290232
+  alpha: 0.133914680764785
+  comp_dim: 46
+  prot_dim: 99
+  latent_dim: 64
+  window: 4
+  layer_cnn: 2
+  layer_out: 4
+  Result: 1.106193
+
+Trial 37:
+  lr: 0.00011253068181931556
+  step_size: 10
+  gamma: 0.18680785766771313
+  batch_size: 25
+  num_epochs: 40
+  gat_dim: 43
+  num_head: 6
+  dropout: 0.2522923276402601
+  alpha: 0.111880599522737
+  comp_dim: 73
+  prot_dim: 88
+  latent_dim: 94
+  window: 5
+  layer_cnn: 2
+  layer_out: 3
+  Result: 1.058683
+
+Trial 38:
+  lr: 0.0005747388882614923
+  step_size: 8
+  gamma: 0.40328809704152924
+  batch_size: 16
+  num_epochs: 88
+  gat_dim: 54
+  num_head: 4
+  dropout: 0.46994294666805964
+  alpha: 0.06068644398730288
+  comp_dim: 82
+  prot_dim: 95
+  latent_dim: 76
+  window: 10
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.015907
+
+Trial 39:
+  lr: 0.0006316733059776102
+  step_size: 7
+  gamma: 0.48504839879517947
+  batch_size: 15
+  num_epochs: 89
+  gat_dim: 52
+  num_head: 4
+  dropout: 0.47195517784375557
+  alpha: 0.021364100652990187
+  comp_dim: 81
+  prot_dim: 96
+  latent_dim: 53
+  window: 10
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.096788
+
+Trial 40:
+  lr: 0.0012120317475063417
+  step_size: 8
+  gamma: 0.42016244183179946
+  batch_size: 14
+  num_epochs: 97
+  gat_dim: 65
+  num_head: 3
+  dropout: 0.5556240040769106
+  alpha: 0.09625697034518332
+  comp_dim: 91
+  prot_dim: 115
+  latent_dim: 66
+  window: 9
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.060741
+
+Trial 41:
+  lr: 0.00023968253583363017
+  step_size: 9
+  gamma: 0.33044421069914326
+  batch_size: 22
+  num_epochs: 81
+  gat_dim: 119
+  num_head: 4
+  dropout: 0.5161743028520998
+  alpha: 0.058240493078660485
+  comp_dim: 128
+  prot_dim: 107
+  latent_dim: 79
+  window: 9
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.053246
+
+Trial 42:
+  lr: 0.00040899478622993823
+  step_size: 7
+  gamma: 0.392087821203138
+  batch_size: 14
+  num_epochs: 88
+  gat_dim: 54
+  num_head: 5
+  dropout: 0.4523490060160447
+  alpha: 0.07980181002914657
+  comp_dim: 98
+  prot_dim: 93
+  latent_dim: 78
+  window: 8
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.037059
+
+Trial 43:
+  lr: 0.0003827497895421472
+  step_size: 7
+  gamma: 0.5393854709486554
+  batch_size: 12
+  num_epochs: 92
+  gat_dim: 54
+  num_head: 5
+  dropout: 0.5983234765595192
+  alpha: 0.07828513299161353
+  comp_dim: 100
+  prot_dim: 95
+  latent_dim: 77
+  window: 8
+  layer_cnn: 1
+  layer_out: 5
+  Result: 1.09304
+
+Trial 44:
+  lr: 0.0005488050305019975
+  step_size: 5
+  gamma: 0.400547368200666
+  batch_size: 8
+  num_epochs: 85
+  gat_dim: 44
+  num_head: 5
+  dropout: 0.11111678722953616
+  alpha: 0.06577402337734804
+  comp_dim: 109
+  prot_dim: 102
+  latent_dim: 70
+  window: 10
+  layer_cnn: 5
+  layer_out: 5
+  Result: 1.036078
+
+Trial 45:
+  lr: 0.0012308400320476512
+  step_size: 5
+  gamma: 0.3194135739270723
+  batch_size: 8
+  num_epochs: 83
+  gat_dim: 31
+  num_head: 4
+  dropout: 0.148396401635048
+  alpha: 0.06436094671514736
+  comp_dim: 110
+  prot_dim: 122
+  latent_dim: 58
+  window: 10
+  layer_cnn: 5
+  layer_out: 5
+  Result: 1.082345
+
+Trial 46:
+  lr: 0.0027059951872159416
+  step_size: 6
+  gamma: 0.25595662864681423
+  batch_size: 19
+  num_epochs: 79
+  gat_dim: 22
+  num_head: 6
+  dropout: 0.11717304782235483
+  alpha: 0.03874331065624914
+  comp_dim: 121
+  prot_dim: 110
+  latent_dim: 70
+  window: 10
+  layer_cnn: 5
+  layer_out: 4
+  Result: 1.049872
+
+Trial 47:
+  lr: 0.0006521575487152333
+  step_size: 8
+  gamma: 0.5996175197422486
+  batch_size: 8
+  num_epochs: 75
+  gat_dim: 45
+  num_head: 3
+  dropout: 0.1930083129974823
+  alpha: 0.05195170807198921
+  comp_dim: 79
+  prot_dim: 102
+  latent_dim: 82
+  window: 9
+  layer_cnn: 5
+  layer_out: 5
+  Result: 1.075524
+
+Trial 48:
+  lr: 0.0063829301827742985
+  step_size: 12
+  gamma: 0.40951948883610745
+  batch_size: 17
+  num_epochs: 95
+  gat_dim: 40
+  num_head: 5
+  dropout: 0.16796969476380727
+  alpha: 0.01120714276759608
+  comp_dim: 105
+  prot_dim: 75
+  latent_dim: 86
+  window: 9
+  layer_cnn: 4
+  layer_out: 4
+  Result: 1.201491
+
+Trial 49:
+  lr: 0.00023331765777079915
+  step_size: 10
+  gamma: 0.45223269319226994
+  batch_size: 24
+  num_epochs: 86
+  gat_dim: 47
+  num_head: 4
+  dropout: 0.21095463206318205
+  alpha: 0.09169358168757288
+  comp_dim: 119
+  prot_dim: 114
+  latent_dim: 59
+  window: 10
+  layer_cnn: 4
+  layer_out: 5
+  Result: 1.113445
+
+Trial 0:
+  lr: 7.359268015114768e-05
+  step_size: 14
+  gamma: 0.5037647998609699
+  batch_size: 55
+  num_epochs: 32
+  gat_dim: 16
+  num_head: 5
+  dropout: 0.18357260606843204
+  alpha: 0.1538602129968927
+  comp_dim: 55
+  prot_dim: 43
+  latent_dim: 98
+  window: 7
+  layer_cnn: 5
+  layer_out: 4
+Trial 0:
+  lr: 3.513280686869712e-05
+  step_size: 13
+  gamma: 0.2042538676666973
+  batch_size: 58
+  num_epochs: 97
+  gat_dim: 46
+  num_head: 8
+  dropout: 0.5706595408272892
+  alpha: 0.13304120674157308
+  comp_dim: 72
+  prot_dim: 66
+  latent_dim: 69
+  window: 10
+  layer_cnn: 5
+  layer_out: 1
+Trial 0:
+  lr: 0.005840225522218004
+  step_size: 18
+  gamma: 0.6763948776783548
+  batch_size: 43
+  num_epochs: 35
+  gat_dim: 78
+  num_head: 8
+  dropout: 0.27265200606345785
+  alpha: 0.1262595745043277
+  comp_dim: 105
+  prot_dim: 87
+  latent_dim: 69
+  window: 8
+  layer_cnn: 4
+  layer_out: 1
