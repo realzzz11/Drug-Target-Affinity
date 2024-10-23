@@ -5,7 +5,10 @@ import pandas as pd
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from collections import defaultdict
+
+import torch
 from data_prepare import training_data_prepare
+from transformers import BertModel, BertTokenizer
 
 # 定义五个字典
 # 它们都是defaultdict对象。默认情况下，这些字典在访问不存在的键时，会将该键的值设置为当前字典的长度，即键值对的数量。
@@ -14,6 +17,10 @@ bond_dict = defaultdict(lambda: len(bond_dict))
 fingerprint_dict = defaultdict(lambda: len(fingerprint_dict))
 edge_dict = defaultdict(lambda: len(edge_dict))
 word_dict = defaultdict(lambda: len(word_dict))
+# 加载 ProtBERT 模型
+tokenizer = BertTokenizer.from_pretrained('Rostlab/prot_bert_bfd', do_lower_case=False)
+model = BertModel.from_pretrained('Rostlab/prot_bert_bfd')
+
 
 # 接受一个分子对象mol作为输入
 def create_atoms(mol):
@@ -89,34 +96,47 @@ def get_fingerprints(mol):
     fp = AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024, useChirality=True)
     return fp.ToBitString()
 
-# 将蛋白质序列两端加上特殊字符'-'和'='，然后将其分割为ngram大小的片段，并用word_dict字典将这些片段转换为索引数组返回
-def split_sequence(sequence, ngram):
-    sequence = '-' + sequence + '='
-    words = [word_dict[sequence[i:i+ngram]]
-             for i in range(len(sequence)-ngram+1)]
-    return np.array(words)
+# 化合物处理函数
+def process_compound(smiles):
+    mol = Chem.AddHs(Chem.MolFromSmiles(smiles))
+    atoms = create_atoms(mol)
+    i_jbond_dict = create_ijbonddict(mol)
+    compound_features = atom_features(atoms, i_jbond_dict, radius=2)
+    adjacency_matrix = create_adjacency(mol)
+    fingerprints = get_fingerprints(mol)
+    return compound_features, adjacency_matrix, fingerprints
+
+# 使用 ProtBERT 模型处理蛋白质序列
+def process_protein(sequence):
+    inputs = tokenizer(sequence, return_tensors="pt", truncation=True, padding=True, max_length=512)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    protein_embedding = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
+    return protein_embedding
 
 
+# 保存字典
 def dump_dictionary(dictionary, filename):
     with open(filename, 'wb') as f:
         pickle.dump(dict(dictionary), f)
 
 
-def extract_input_data(input_path, output_path, radius, ngram):
+def extract_input_data(input_path, output_path):
     data = pd.read_csv(input_path + '.txt', header=None)
     compounds, adjacencies, fps, proteins, interactions = [], [], [], [], []
 
     for index in range(len(data)):
         smiles, sequence, interaction = data.iloc[index, :] # 将每行数据分为三个部分：化合物的 SMILES 字符串（smiles），蛋白质的序列（sequence），以及它们之间的交互（interaction）
 
-        mol = Chem.AddHs(Chem.MolFromSmiles(smiles))
-        atoms = create_atoms(mol)
-        i_jbond_dict = create_ijbonddict(mol)
+        
+        # 处理化合物和蛋白质
+        compound_features, adjacency_matrix, fingerprints = process_compound(smiles)
+        protein_embedding = process_protein(sequence)
 
-        compounds.append(atom_features(atoms, i_jbond_dict, radius))
-        adjacencies.append(create_adjacency(mol))
-        fps.append(get_fingerprints(mol))
-        proteins.append(split_sequence(sequence, ngram))
+        compounds.append(compound_features)
+        adjacencies.append(adjacency_matrix)
+        fps.append(fingerprints)
+        proteins.append(protein_embedding)
         interactions.append(np.array([float(interaction)]))
 
     os.makedirs(output_path, exist_ok=True)
@@ -127,16 +147,16 @@ def extract_input_data(input_path, output_path, radius, ngram):
     np.save(os.path.join(output_path, 'interactions'), interactions)
 
 
+# 主数据处理函数
 def training_data_process(task, dataset):
-    radius, ngram = 2, 3
 
     if not os.path.isdir(os.path.join('./data', task, dataset)):
         training_data_prepare(task, dataset)
 
     for name in ['train', 'test']:
         input_path = os.path.join('./data', task, dataset, name)
-        output_path = os.path.join('./datasets', task, dataset, name)
-        extract_input_data(input_path, output_path, radius, ngram)
+        output_path = os.path.join('./datasets_ProtBERT', task, dataset, name)
+        extract_input_data(input_path, output_path)
 
-    dump_dictionary(fingerprint_dict, os.path.join('./datasets', task, dataset, 'atom_dict'))
-    dump_dictionary(word_dict, os.path.join('./datasets', task, dataset, 'amino_dict'))
+    dump_dictionary(fingerprint_dict, os.path.join('./datasets_ProtBERT', task, dataset, 'atom_dict'))
+    
