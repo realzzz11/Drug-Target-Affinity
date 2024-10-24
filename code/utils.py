@@ -7,9 +7,43 @@ from sklearn import metrics
 from sklearn.metrics import roc_auc_score, accuracy_score, precision_recall_curve
 
 
+# def batch_pad(arr):
+#     N = max([a.shape[0] for a in arr])
+#     if arr[0].ndim == 1:
+#         new_arr = np.zeros((len(arr), N))
+#         new_arr_mask = np.zeros((len(arr), N))
+#         for i, a in enumerate(arr):
+#             n = a.shape[0]
+#             new_arr[i, :n] = a + 1
+#             new_arr_mask[i, :n] = 1
+#         return new_arr, new_arr_mask
+
+#     elif arr[0].ndim == 2:
+#         new_arr = np.zeros((len(arr), N, N))
+#         new_arr_mask = np.zeros((len(arr), N, N))
+#         for i, a in enumerate(arr):
+#             n = a.shape[0]
+#             new_arr[i, :n, :n] = a
+#             new_arr_mask[i, :n, :n] = 1
+#         return new_arr, new_arr_mask
 def batch_pad(arr):
+    """
+    该函数用于对输入数组进行填充操作，以适应不同大小的数据。
+    根据输入数据的形状，动态计算填充的维度，确保输入的数据能够被正确填充。
+
+    Args:
+        arr (list): 输入列表，每个元素可能是不同维度的数组。
+
+    Returns:
+        new_arr: 填充后的数组
+        new_arr_mask: 对应的掩码数组
+    """
+    # 获取最大长度的第一维（时间步/序列长度）
     N = max([a.shape[0] for a in arr])
-    if arr[0].ndim == 1:
+    # 获取最大长度的第二维（特征维度）
+    D = max([a.shape[1] for a in arr]) if arr[0].ndim > 1 else 1
+
+    if arr[0].ndim == 1:  # 如果是 1 维数据
         new_arr = np.zeros((len(arr), N))
         new_arr_mask = np.zeros((len(arr), N))
         for i, a in enumerate(arr):
@@ -18,13 +52,14 @@ def batch_pad(arr):
             new_arr_mask[i, :n] = 1
         return new_arr, new_arr_mask
 
-    elif arr[0].ndim == 2:
-        new_arr = np.zeros((len(arr), N, N))
-        new_arr_mask = np.zeros((len(arr), N, N))
+    elif arr[0].ndim == 2:  # 如果是 2 维数据，如蛋白质特征
+        new_arr = np.zeros((len(arr), N, D))  # 填充到最大长度和最大维度
+        new_arr_mask = np.zeros((len(arr), N))  # 只需要记录时间步的掩码
         for i, a in enumerate(arr):
             n = a.shape[0]
-            new_arr[i, :n, :n] = a
-            new_arr_mask[i, :n, :n] = 1
+            d = a.shape[1]
+            new_arr[i, :n, :d] = a  # 填充数据
+            new_arr_mask[i, :n] = 1  # 对应位置设为 1，表示有效数据
         return new_arr, new_arr_mask
 
 
@@ -40,7 +75,7 @@ def batch2tensor(batch_data, device):
     adjacencies_pad, _ = batch_pad(batch_data[1])
     fps = fps2number(batch_data[2])
     amino_pad, amino_mask = batch_pad(batch_data[3])
-
+    print(atoms_pad.shape, atoms_mask.shape, adjacencies_pad.shape, fps.shape, amino_pad.shape, amino_mask.shape)
     atoms_pad = Variable(torch.LongTensor(atoms_pad)).to(device)
     atoms_mask = Variable(torch.FloatTensor(atoms_mask)).to(device)
     adjacencies_pad = Variable(torch.LongTensor(adjacencies_pad)).to(device)

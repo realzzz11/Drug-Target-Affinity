@@ -7,9 +7,9 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from model import BACPI
+from code.model.model import BACPI
 from utils import *
-from data_process import training_data_process
+from code.data_processing.data_process import training_data_process
 from torch.utils.tensorboard import SummaryWriter
 import time
 
@@ -57,7 +57,7 @@ def train_eval(model, task, data_train, data_dev, data_test, device, params):
         print("Please choose a correct mode!!!")
         return 
     
-    optimizer = optim.Adam(model.parameters(), lr=params.lr, weight_decay=0, amsgrad=True)
+    optimizer = optim.Adam(model.parameters(), lr=params.lr, weight_decay=0.01, amsgrad=True)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.5)
     idx = np.arange(len(data_train[0]))
     batch_size = params.batch_size

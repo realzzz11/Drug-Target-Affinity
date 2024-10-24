@@ -7,9 +7,9 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from model import BACPI
+from code.encoder_model import BACPI
 from utils import *
-from data_process import training_data_process
+from code.data_processing.data_process import training_data_process
 from torch.utils.tensorboard import SummaryWriter
 import time
 
@@ -121,7 +121,7 @@ def train_eval(model, task, data_train, data_test, device, params):
         writer.add_scalar('Spearman/test', spearman_test, epoch)
 
         scheduler.step()
-        
+
     res = [rmse_test, pearson_test, spearman_test]
     return res
 
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     writer = SummaryWriter(log_dir='./logs/{}'.format(task))
     res = train_eval(model, task, train_data, test_data, device, params)
     writer.close()
-    torch.save(model, './optuna_checkpoint/best_model_retrain.pth')
+    torch.save(model, './optuna_dynamicGAT_checkpoint/best_model_retrain.pth')
     print('Finish training!')
     if task == 'affinity':
         print('Finally test result of rmse:{}, pearson:{}, spearman:{}'.format(res[0], res[1], res[2]))
